@@ -5,43 +5,44 @@ import h5py
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-basedir = '/Users/yilewang/Desktop/nsd'
-stimuli_dir = pjoin(basedir, 'nsddata_stimuli')
+basedir = '/mnt/c/Users/Wayne/Desktop/nsd'
+stimuli_dir = pjoin(basedir, 'nsd_stimuli')
 stimuli_file = pjoin(stimuli_dir, 'nsd_stimuli.hdf5')
 
-def main():
-    # Get data key
-    f = h5py.File(stimuli_file, 'r')
+# read hdf5 file
+with h5py.File(stimuli_file, 'r') as f:
+    # get data key
     data_key = list(f.keys())[0]
-    num_images = f[data_key].shape[0]
-    f.close()
+    dataset = f[data_key]
 
-    # Add progress bar with tqdm
-    for i in tqdm(range(num_images)):
-        # Re-open file, read image data, then close
-        f = h5py.File(stimuli_file, 'r')
-        single_img = f[data_key][i, :, :, :]
-        f.close()
+    def main():
+        # Create an empty numpy array to hold the image data
+        single_img = np.empty((dataset.shape[1], dataset.shape[2], dataset.shape[3]), dtype=dataset.dtype)
 
-        fig = plt.figure(figsize=(4.25, 4.25), dpi=100)
-        # hide axis
-        # Remove white space
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        # Add progress bar with tqdm
+        for i in tqdm(range(dataset.shape[0])):
+            # Read the image data directly into the numpy array
+            dataset.read_direct(single_img, np.s_[i, :, :, :])
 
-        # Remove the ticks and their labels
-        plt.xticks([]), plt.yticks([])
+            fig = plt.figure(figsize=(4.25, 4.25), dpi=100)
+            # hide axis
+            # Remove white space
+            plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-        # Remove the axes
-        [axi.set_axis_off() for axi in plt.gcf().axes]
+            # Remove the ticks and their labels
+            plt.xticks([]), plt.yticks([])
 
-        plt.imshow(single_img)
-        # save image with index as name
-        plt.savefig(pjoin(stimuli_dir, 'pics', str(i)+'.png'), bbox_inches="tight", pad_inches=0)
+            # Remove the axes
+            [axi.set_axis_off() for axi in plt.gcf().axes]
 
-        # clear the current figure after saving it
-        plt.clf()
-        plt.close()
+            plt.imshow(single_img)
+            # save image with index as name
+            plt.savefig(pjoin(stimuli_dir, 'pics', str(i)+'.png'), bbox_inches="tight", pad_inches=0)
+            
+            # clear the current figure after saving it
+            plt.clf()
+            plt.close()
 
-if __name__ == '__main__':
-    main()
+    if __name__ == '__main__':
+        main()
 
