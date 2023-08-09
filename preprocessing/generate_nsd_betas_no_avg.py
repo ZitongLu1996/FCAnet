@@ -107,23 +107,9 @@ class NSD_Processor:
 
         # Main Steps
 
-        # step 1, get roi size
-        total_voxel_num = 0
-        for i in range(1,self.visualrois_num):
-            voxel_num_left = self.count_roi_voxels_num(lh_prf_data, int(i))
-            voxel_num_right = self.count_roi_voxels_num(rh_prf_data, int(i))
-            total_voxel_num += voxel_num_left + voxel_num_right
-
-        for i in range(self.visualrois_num,self.visualrois_num+self.kastner_num):
-            voxel_num = self.count_roi_voxels_num(kastner_data, int(i))
-            total_voxel_num += voxel_num
-
-
-        # step 2, label all voxels
+        # step 1, label all voxles
         dict4combined_axis = {}
         _tmp_dict = {}
-
-
         for i in range(1,self.visualrois_num):
             _tmp_dict["left_"+prf_visualrois_lables[str(i)]] = self.generate_list_voxel_3d(lh_prf_data, i)
             _tmp_dict["right_"+prf_visualrois_lables[str(i)]] = self.generate_list_voxel_3d(rh_prf_data, i)
@@ -139,7 +125,7 @@ class NSD_Processor:
 
         voxel_locator = self.decompose_3d_to_voxel_id(dict4combined_axis)
 
-        # step 2.1 loading shared pics and classify train and test:
+        # step 2 loading shared pics and classify train and test:
         shared_1000 = pd.read_csv(pjoin(self.basedir, 'shared1000.tsv'), header=None)
 
         # step 3, use the labels to generate betas tables
@@ -171,9 +157,9 @@ class NSD_Processor:
                     stimuli_index += 1
 
         # add a label column to pd_table_train
-        pd_table_train['label'] = voxel_locator['label']
+        pd_table_train = pd.concat([pd_table_train, voxel_locator['label']])
         # add a label column to pd_table_test
-        pd_table_test['label'] = voxel_locator['label']
+        pd_table_test = pd.concat([pd_table_test, voxel_locator['label']])
 
         pd_table_train.to_csv(pjoin(self.basedir, 'train_betas.csv'))
         pd_table_test.to_csv(pjoin(self.basedir, 'test_betas.csv'))
