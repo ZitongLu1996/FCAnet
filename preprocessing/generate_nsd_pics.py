@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 basedir = '/mnt/c/Users/Wayne/Desktop/nsd'
-stimuli_dir = pjoin(basedir, 'nsd_stimuli')
-stimuli_file = pjoin(stimuli_dir, 'nsd_stimuli.hdf5')
+stimuli_file = pjoin(basedir, 'nsd_stimuli.hdf5')
 
 # read hdf5 file
 with h5py.File(stimuli_file, 'r') as f:
@@ -37,7 +36,7 @@ with h5py.File(stimuli_file, 'r') as f:
 
             plt.imshow(single_img)
             # save image with index as name
-            plt.savefig(pjoin(stimuli_dir, 'pics', str(i)+'.png'), bbox_inches="tight", pad_inches=0)
+            plt.savefig(pjoin(basedir, 'pics', str(i)+'.png'), bbox_inches="tight", pad_inches=0)
             
             # clear the current figure after saving it
             plt.clf()
