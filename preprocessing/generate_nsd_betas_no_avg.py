@@ -13,7 +13,7 @@ import multiprocessing
 
 class NSD_Processor:
     def __init__(self, subject="sub_01"):
-        self.basedir = '/mnt/c/Users/Wayne/Desktop/nsd'
+        self.basedir = '/Volumes/side_project/nsd'
         self.subject = subject
         self.betas_dir = pjoin(self.basedir, f'{self.subject}/nsd_betas')
         self.design_file = pjoin(self.basedir, f'{self.subject}/nsd_design')
